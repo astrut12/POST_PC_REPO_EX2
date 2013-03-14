@@ -49,21 +49,32 @@ public class MainActivity extends Activity {
 	}
 
 	private void onAddSelected() {
-		// Retrieve edtNewItem. 
+		// Retrieve text from edtNewItem. 
 		EditText edtNewItem = (EditText)findViewById(R.id.edtNewItem);
+		String newItemStr = edtNewItem.getText().toString();
+		
+		// Return on empty string.
+		if(newItemStr == null || newItemStr.length() == 0)
+			return;
 		
 		// Add to lstTodoItemsAdapter the text in edtNewItem.
-		lstTodoItemsAdapter.add(edtNewItem.getText().toString());
+		lstTodoItemsAdapter.add(newItemStr);
 		edtNewItem.setText(""); //TODO check if required to clear
 	}
 	
 	private void onDeleteSelected() {
 		// Retrieve checked list item inner String object. 
 		ListView lstTodoItems = (ListView)findViewById(R.id.lstTodoItems);
-		String selectedItem = (String)lstTodoItems.getSelectedItem();
+		int selectedItemIndex = lstTodoItems.getSelectedItemPosition();
 		
-		// Remove the selected item from lstTodoItemsAdapter.
-		lstTodoItemsAdapter.remove(selectedItem);
+		// Return on invalid position
+		if (!lstTodoItems.hasFocus() || selectedItemIndex == ListView.INVALID_POSITION)
+			return;
+		
+		// Remove the selected item from underlying list and update adapter.
+		dataTodoItems.remove(selectedItemIndex);
+		lstTodoItemsAdapter.notifyDataSetChanged();
+		
 	}
 
 }
