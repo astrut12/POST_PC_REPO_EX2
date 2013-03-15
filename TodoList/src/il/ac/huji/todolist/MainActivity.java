@@ -68,7 +68,8 @@ public class MainActivity extends Activity {
 		int selectedItemIndex = lstTodoItems.getSelectedItemPosition();
 		
 		// Return on invalid position
-		if (!lstTodoItems.hasFocus() || selectedItemIndex == ListView.INVALID_POSITION)
+//		if (!lstTodoItems.hasFocus() || selectedItemIndex == ListView.INVALID_POSITION)
+		if (selectedItemIndex == ListView.INVALID_POSITION)		
 			return;
 		
 		// Remove the selected item from underlying list and update adapter.
