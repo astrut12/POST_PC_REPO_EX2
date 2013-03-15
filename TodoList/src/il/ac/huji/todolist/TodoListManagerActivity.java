@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-public class MainActivity extends Activity {
+public class TodoListManagerActivity extends Activity {
 	
 	private ArrayAdapter <String> lstTodoItemsAdapter;
 	private ArrayList<String> dataTodoItems;
@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// Initialize main layout.
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_todo_list_manager);
 		
 		// Create an adapter for lstTodoItems.
 //		lstTodoItemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1); TODO remove this

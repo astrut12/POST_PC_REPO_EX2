@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TodoList</string>
+    <string name="app_name">Todo List</string>
     <string name="menu_item_add_title">Add</string>
     <string name="menu_item_delete_title">Delete</string>
     <string name="edt_new_item_hint">Enter a new task here</string>
