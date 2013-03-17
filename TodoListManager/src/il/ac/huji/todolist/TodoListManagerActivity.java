@@ -6,11 +6,15 @@ import java.util.Date;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class TodoListManagerActivity extends Activity {
 	
@@ -24,10 +28,13 @@ public class TodoListManagerActivity extends Activity {
 		setContentView(R.layout.activity_todo_list_manager);
 		
 		// Create an adapter for lstTodoItems.
-//		lstTodoItemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1); TODO remove this
 		dataTodoItems = new ArrayList<ListItem>();
 		lstTodoItemsAdapter = new TodoListItemAdapter(this, dataTodoItems);
-		((ListView)findViewById(R.id.lstTodoItems)).setAdapter(lstTodoItemsAdapter);
+		ListView lstTodoItems = (ListView)findViewById(R.id.lstTodoItems);
+		(lstTodoItems).setAdapter(lstTodoItemsAdapter);
+		
+		// Attach a context menu to the list.
+		registerForContextMenu(lstTodoItems);
 	}
 
 	@Override
@@ -38,32 +45,45 @@ public class TodoListManagerActivity extends Activity {
 	}
 
 	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		
+		//TODO: identify the right view.
+		TextView txtTodoTitle = (TextView)v.findViewById(R.id.txtTodoTitle);
+		if (txtTodoTitle == null)
+			return;
+		
+	    getMenuInflater().inflate(R.menu.todo_list_context, menu);
+	    menu.setHeaderTitle(txtTodoTitle.getText());
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menuItemAdd:
 				onAddSelected();
 				break;
+		}
+		return true;
+	}
+	
+	
+	//TODO: review
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo itemInfo = (AdapterContextMenuInfo)item.getMenuInfo();
+		
+		switch (item.getItemId()) {
 			case R.id.menuItemDelete:
-				onDeleteSelected();
+				if (itemInfo == null)
+					return false;
+				onDeleteSelected(itemInfo.position);
 				break;
 		}
 		return true;
 	}
 
-//	private void onAddSelected() {
-//		// Retrieve text from edtNewItem. 
-//		EditText edtNewItem = (EditText)findViewById(R.id.edtNewItem);
-//		String newItemStr = edtNewItem.getText().toString();
-//		
-//		// Return on empty string.
-//		if(newItemStr == null || newItemStr.length() == 0)
-//			return;
-//		
-//		// Add to lstTodoItemsAdapter the text in edtNewItem.
-//		lstTodoItemsAdapter.add(newItemStr);
-//		edtNewItem.setText(""); //TODO check if required to clear
-//	}
-	
 	private void onAddSelected() {
 		// Start the Add Item dialog.
 		Intent addNewItemActivityIntent = new Intent(this, AddNewTodoItemActivity.class);
@@ -84,20 +104,14 @@ public class TodoListManagerActivity extends Activity {
 	}
 
 	
-	private void onDeleteSelected() {
-		// Retrieve checked list item inner String object. 
-		ListView lstTodoItems = (ListView)findViewById(R.id.lstTodoItems);
-		int selectedItemIndex = lstTodoItems.getSelectedItemPosition();
-		
+	private void onDeleteSelected(int positionToDelete) {
 		// Return on invalid position
-//		if (!lstTodoItems.hasFocus() || selectedItemIndex == ListView.INVALID_POSITION)
-		if (selectedItemIndex == ListView.INVALID_POSITION)		
+		if (positionToDelete == ListView.INVALID_POSITION)		
 			return;
 		
 		// Remove the selected item from underlying list and update adapter.
-		dataTodoItems.remove(selectedItemIndex);
+		dataTodoItems.remove(positionToDelete);
 		lstTodoItemsAdapter.notifyDataSetChanged();
 		
 	}
-
 }
