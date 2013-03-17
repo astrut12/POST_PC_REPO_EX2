@@ -36,7 +36,7 @@ public class AddNewTodoItemActivity extends Activity {
 		// Set return parameters and return to TodoListManager. 
 		Intent data = new Intent(this, TodoListManagerActivity.class);
 		data.putExtra(getString(R.string.extra_key_title), title);
-		data.putExtra(getString(R.string.extra_key_due_date), dueDate);
+		data.putExtra(getString(R.string.extra_key_due_date_title), dueDate);
 		
 		setResult(RESULT_OK, data);
 		finish();

@@ -76,7 +76,7 @@ public class TodoListManagerActivity extends Activity {
 			case R.id.AddNewItemLayout:
 				if (resCode == RESULT_OK) {
 					String newItemTitle = data.getStringExtra(getString(R.string.extra_key_title));
-					Date newItemDueDate = (Date)data.getSerializableExtra(getString(R.string.extra_key_due_date));
+					Date newItemDueDate = (Date)data.getSerializableExtra(getString(R.string.extra_key_due_date_title));
 	      
 					lstTodoItemsAdapter.add(new ListItem(newItemTitle, newItemDueDate));
 				}

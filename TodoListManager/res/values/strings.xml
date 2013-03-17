@@ -10,6 +10,7 @@
     <string name="btn_cancel_title">Cancel</string>
     <string name="btn_ok_title">OK</string>
     <string name="extra_key_title">title</string>
-    <string name="extra_key_due_date">dueDate</string>
+    <string name="extra_key_due_date_title">dueDate</string>
+    <string name="no_due_date">No due date</string>
 
 </resources>

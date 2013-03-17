@@ -8,6 +8,7 @@ public class ListItem {
 	
 	public ListItem(String title, Date date) {
 		this.title = title;
+		
 		this.dueDate = date;
 	}	
 }
