@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="14"
         android:targetSdkVersion="17" />
 
     <application
@@ -21,6 +21,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="il.ac.huji.todolist.AddNewTodoItemActivity"
+            android:label="@string/title_activity_add_new_todo_item" 
+            android:theme="@style/DialogTheme">
         </activity>
     </application>
 
