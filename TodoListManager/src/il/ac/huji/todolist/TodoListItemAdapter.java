@@ -1,7 +1,9 @@
 package il.ac.huji.todolist;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -39,11 +41,9 @@ public final class TodoListItemAdapter extends ArrayAdapter<ListItem> {
 		TextView txtTodoDueDate = (TextView)resultView.findViewById(R.id.txtTodoDueDate);
 		
 		// Set text views values.
-		Date dueDate = this.getItem(position).dueDate;
-		
 		txtTodoTitle.setText(this.getItem(position).title);
-		String DateStr = dueDate == null ? getContext().getString(R.string.no_due_date) : dueDate.toString();
-		txtTodoDueDate.setText(DateStr);
+		Date dueDate = this.getItem(position).dueDate;
+		txtTodoDueDate.setText(parseDueDate(dueDate));
 		
 		// Paint in red if due date passed.
 		if (dueDate != null && dueDate.before(new Date())) {
@@ -52,5 +52,11 @@ public final class TodoListItemAdapter extends ArrayAdapter<ListItem> {
 		}
 		
 		return resultView;
+	}
+
+	// Returns formated date or a default string if dueDate is null
+	private String parseDueDate(Date dueDate) {
+		SimpleDateFormat df = new SimpleDateFormat(getContext().getString(R.string.date_format), Locale.US);
+		return dueDate == null ? getContext().getString(R.string.no_due_date) : df.format(dueDate);
 	}
 }
