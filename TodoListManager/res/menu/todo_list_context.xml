@@ -12,7 +12,7 @@
         android:id="@+id/menuItemCall"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="Call 22222"
+        android:title=""
         android:icon="@android:drawable/ic_menu_call"
         android:visible="false" /> 
 

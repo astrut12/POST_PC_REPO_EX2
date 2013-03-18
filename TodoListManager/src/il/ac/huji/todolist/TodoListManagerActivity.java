@@ -60,6 +60,7 @@ public class TodoListManagerActivity extends Activity {
 	    
 	    menu.setHeaderTitle(txtTodoTitle.getText());
 	    
+	    //TODO: debug here when title is empty or null
 	    if (txtTodoTitle.getText().toString().startsWith(getString(R.string.call_title)))
 	    {
 	    	MenuItem menuItemCall = menu.findItem(R.id.menuItemCall);
@@ -73,20 +74,26 @@ public class TodoListManagerActivity extends Activity {
 		switch (item.getItemId()) {
 			case R.id.menuItemAdd:
 				onAddSelected();
-				break;
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
-		return true;
 	}
 	
-	
-	
-	//TODO: review
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo itemInfo = (AdapterContextMenuInfo)item.getMenuInfo();
+		
+		// Retrieve the item's adapter info.
+		AdapterContextMenuInfo itemInfo;
+		try {
+			itemInfo = (AdapterContextMenuInfo)item.getMenuInfo();
+		} catch (Exception e) {
+			return false;
+		}
 		if (itemInfo == null)
 			return super.onContextItemSelected(item);
 		
+		// Start of action routing.
 		switch (item.getItemId()) {
 			case R.id.menuItemDelete:
 				onDeleteSelected(itemInfo.position);
@@ -130,7 +137,6 @@ public class TodoListManagerActivity extends Activity {
 		
 	}
 	
-	//TODO: error handle
 	private void onCallSelected(String itemTitle) {
 		String[] itemTitleSplit = itemTitle.split(getString(R.string.call_title));
 		if (itemTitleSplit.length != 2 || !itemTitleSplit[0].isEmpty())

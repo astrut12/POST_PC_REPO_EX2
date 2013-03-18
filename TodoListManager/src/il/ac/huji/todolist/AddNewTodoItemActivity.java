@@ -33,4 +33,9 @@ public class AddNewTodoItemActivity extends Activity {
 		setResult(RESULT_OK, data);
 		finish();
 	}
+	
+	public void onNewTaskCancel(View view) {		
+		setResult(RESULT_CANCELED);
+		finish();
+	}
 }
