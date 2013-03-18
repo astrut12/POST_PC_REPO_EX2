@@ -3,6 +3,7 @@ package il.ac.huji.todolist;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -50,12 +51,21 @@ public class TodoListManagerActivity extends Activity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		
 		//TODO: identify the right view.
-		TextView txtTodoTitle = (TextView)v.findViewById(R.id.txtTodoTitle);
+		View selectedView = ((AdapterContextMenuInfo)menuInfo).targetView;
+		TextView txtTodoTitle = (TextView)selectedView.findViewById(R.id.txtTodoTitle);
 		if (txtTodoTitle == null)
 			return;
 		
 	    getMenuInflater().inflate(R.menu.todo_list_context, menu);
+	    
 	    menu.setHeaderTitle(txtTodoTitle.getText());
+	    
+	    if (txtTodoTitle.getText().toString().startsWith(getString(R.string.call_title)))
+	    {
+	    	MenuItem menuItemCall = menu.findItem(R.id.menuItemCall);
+	    	menuItemCall.setTitle(txtTodoTitle.getText());
+	    	menuItemCall.setVisible(true);
+	    }
 	}
 
 	@Override
@@ -69,19 +79,24 @@ public class TodoListManagerActivity extends Activity {
 	}
 	
 	
+	
 	//TODO: review
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo itemInfo = (AdapterContextMenuInfo)item.getMenuInfo();
+		if (itemInfo == null)
+			return super.onContextItemSelected(item);
 		
 		switch (item.getItemId()) {
 			case R.id.menuItemDelete:
-				if (itemInfo == null)
-					return false;
 				onDeleteSelected(itemInfo.position);
-				break;
+				return true;
+			case R.id.menuItemCall:
+				onCallSelected(item.getTitle().toString());
+				return true;
+			default:
+				return super.onContextItemSelected(item);
 		}
-		return true;
 	}
 
 	private void onAddSelected() {
@@ -113,5 +128,15 @@ public class TodoListManagerActivity extends Activity {
 		dataTodoItems.remove(positionToDelete);
 		lstTodoItemsAdapter.notifyDataSetChanged();
 		
+	}
+	
+	//TODO: error handle
+	private void onCallSelected(String itemTitle) {
+		String[] itemTitleSplit = itemTitle.split(getString(R.string.call_title));
+		if (itemTitleSplit.length != 2 || !itemTitleSplit[0].isEmpty())
+			return;
+		
+		Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse(getString(R.string.tel_title) + itemTitleSplit[1]));
+		startActivity(dialIntent);
 	}
 }
