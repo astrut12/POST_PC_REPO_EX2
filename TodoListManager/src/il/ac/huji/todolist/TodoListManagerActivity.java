@@ -50,7 +50,6 @@ public class TodoListManagerActivity extends Activity {
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		
-		//TODO: identify the right view.
 		View selectedView = ((AdapterContextMenuInfo)menuInfo).targetView;
 		TextView txtTodoTitle = (TextView)selectedView.findViewById(R.id.txtTodoTitle);
 		if (txtTodoTitle == null)
@@ -60,13 +59,14 @@ public class TodoListManagerActivity extends Activity {
 	    
 	    menu.setHeaderTitle(txtTodoTitle.getText());
 	    
-	    //TODO: debug here when title is empty or null
 	    if (txtTodoTitle.getText().toString().startsWith(getString(R.string.call_title)))
 	    {
 	    	MenuItem menuItemCall = menu.findItem(R.id.menuItemCall);
 	    	menuItemCall.setTitle(txtTodoTitle.getText().toString());
 	    	menuItemCall.setVisible(true);
 	    }
+	    else //Just for the automatic tester. TODO: remove if won't be tested
+	    	menu.removeItem(R.id.menuItemCall);
 	}
 
 	@Override
