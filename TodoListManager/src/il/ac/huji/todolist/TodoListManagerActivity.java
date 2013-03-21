@@ -139,7 +139,7 @@ public class TodoListManagerActivity extends Activity {
 	
 	private void onCallSelected(String itemTitle) {
 		String[] itemTitleSplit = itemTitle.split(getString(R.string.call_title));
-		if (itemTitleSplit.length != 2 || !itemTitleSplit[0].isEmpty())
+		if (itemTitleSplit == null || itemTitleSplit.length != 2 || !itemTitleSplit[0].isEmpty())
 			return;
 		
 		Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse(getString(R.string.tel_title) + itemTitleSplit[1]));
