@@ -11,7 +11,7 @@
     <string name="extra_key_title">title</string>
     <string name="extra_key_due_date_title">dueDate</string>
     <string name="no_due_date">No due date</string>
-    <string name="call_title">Call </string>
+    <string name="call_title">Call</string>
     <string name="tel_title">tel:</string>
     <string name="date_format">dd/MM/yyyy</string>    
 

@@ -59,7 +59,9 @@ public class TodoListManagerActivity extends Activity {
 	    
 	    menu.setHeaderTitle(txtTodoTitle.getText());
 	    
-	    if (txtTodoTitle.getText().toString().startsWith(getString(R.string.call_title)))
+	    String callTitle = getString(R.string.call_title) + " ";
+	    
+	    if (txtTodoTitle.getText().toString().startsWith(callTitle))
 	    {
 	    	MenuItem menuItemCall = menu.findItem(R.id.menuItemCall);
 	    	menuItemCall.setTitle(txtTodoTitle.getText().toString());
