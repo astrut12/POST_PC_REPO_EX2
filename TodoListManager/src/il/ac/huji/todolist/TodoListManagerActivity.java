@@ -14,12 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class TodoListManagerActivity extends Activity {
 	
-	private ArrayAdapter <ListItem> lstTodoItemsAdapter;
+	private SimpleCursorAdapter lstTodoItemsAdapter;
 	private ArrayList<ListItem> dataTodoItems;
 
 	@Override
