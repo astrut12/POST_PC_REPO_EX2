@@ -3,6 +3,9 @@ package il.ac.huji.todolist;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.parse.Parse;
+import com.parse.ParseObject;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
