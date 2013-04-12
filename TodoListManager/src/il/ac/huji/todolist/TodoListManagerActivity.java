@@ -1,30 +1,25 @@
 package il.ac.huji.todolist;
 
-import java.util.ArrayList;
 import java.util.Date;
-
-import com.parse.Parse;
-import com.parse.ParseObject;
 
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class TodoListManagerActivity extends Activity {
 	
-	private SimpleCursorAdapter lstTodoItemsAdapter;
-	private ArrayList<ListItem> dataTodoItems;
+	private TodoListItemAdapter dbTodoItemsAdapter;
+	private TodoDAL dbWrapper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +27,15 @@ public class TodoListManagerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_todo_list_manager);
 		
-		// Create an adapter for lstTodoItems.
-		dataTodoItems = new ArrayList<ListItem>();
-		lstTodoItemsAdapter = new TodoListItemAdapter(this, dataTodoItems);
+		// Initialize the DB an create an adapter for it.
+		dbWrapper = new TodoDAL(this);
+		String[] fromColumns = {getString(R.string.SQL_title_column), getString(R.string.SQL_due_column)};
+		int[] toViews = {R.id.txtTodoTitle, R.id.txtTodoDueDate};
+		dbTodoItemsAdapter = new TodoListItemAdapter(this, dbWrapper.queryAllItems(), fromColumns, toViews);
+		
+		// Attach the adapter to its View.
 		ListView lstTodoItems = (ListView)findViewById(R.id.lstTodoItems);
-		(lstTodoItems).setAdapter(lstTodoItemsAdapter);
+		(lstTodoItems).setAdapter(dbTodoItemsAdapter);
 		
 		// Attach a context menu to the list.
 		registerForContextMenu(lstTodoItems);
@@ -126,21 +125,23 @@ public class TodoListManagerActivity extends Activity {
 					String newItemTitle = data.getStringExtra(getString(R.string.extra_key_title));
 					Date newItemDueDate = (Date)data.getSerializableExtra(getString(R.string.extra_key_due_date_title));
 	      
-					lstTodoItemsAdapter.add(new ListItem(newItemTitle, newItemDueDate));
+					dbWrapper.insert(new ListItem(newItemTitle, newItemDueDate));
+					dbTodoItemsAdapter.changeCursor(dbWrapper.queryAllItems());
+					dbTodoItemsAdapter.notifyDataSetChanged();
 				}
 		}
 	}
 
 	
-	private void onDeleteSelected(int positionToDelete) {
-		// Return on invalid position
-		if (positionToDelete == ListView.INVALID_POSITION)		
-			return;
-		
+	private void onDeleteSelected(int position) {
 		// Remove the selected item from underlying list and update adapter.
-		dataTodoItems.remove(positionToDelete);
-		lstTodoItemsAdapter.notifyDataSetChanged();
+		Cursor selectedCursor = (Cursor)dbTodoItemsAdapter.getItem(position);
+		int titleColumn = selectedCursor.getColumnIndex(getString(R.string.SQL_title_column));
+		String titleToDelete = selectedCursor.getString(titleColumn);
 		
+		dbWrapper.delete(new ListItem(titleToDelete, null));
+		dbTodoItemsAdapter.changeCursor(dbWrapper.queryAllItems());
+		dbTodoItemsAdapter.notifyDataSetChanged();
 	}
 	
 	private void onCallSelected(String itemTitle) {

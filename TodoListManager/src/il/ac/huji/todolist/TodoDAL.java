@@ -11,6 +11,7 @@ import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -24,21 +25,31 @@ public class TodoDAL {
 	private SQLiteDatabase todo_db;
 	private SQLiteOpenHelper todo_db_helper;
 	
+	private static String TABLE_NAME;
+	private static String TITLE_COLUMN;
+	private static String DUE_COLUMN;
+	private static String DB_NAME;
+	
 	public TodoDAL(Context context) {
 		this.context = context;
 		todo_db_helper = new TodoDBHelper(context);
 		todo_db = todo_db_helper.getWritableDatabase();
+		TABLE_NAME = context.getString(R.string.SQL_todo_table);
+		TITLE_COLUMN = context.getString(R.string.SQL_title_column);
+		DUE_COLUMN = context.getString(R.string.SQL_due_column);
+		DB_NAME = context.getString(R.string.SQL_todo_db);
 		
-		Parse.initialize(context, "5ifLjXNAB2jNuwnTiyTFI5q02ZQ0v1HAswsLyfLd", "DXnVpuWZktMm5sgyxaGQwzvynIb43FABGJFhAlz7");
+		Parse.initialize(context, context.getString(R.string.parseApplication), context.getString(R.string.clientKey));
+		ParseUser.enableAutomaticUser();
 	}
 	
 	public void deleteDB() {
-		context.deleteDatabase("todo_db");
+		context.deleteDatabase(DB_NAME);
 //		clearParse();
 	}
 	
 	private void clearParse() {
-		ParseQuery allItemsQuery = new ParseQuery("todo");
+		ParseQuery allItemsQuery = new ParseQuery(TABLE_NAME);
 		allItemsQuery.findInBackground(new FindCallback() {
 
 			@Override
@@ -60,23 +71,23 @@ public class TodoDAL {
 			return false;
 		
 		ContentValues newTodoItem = new ContentValues();
-		ParseObject newTodoItemParse = new ParseObject("todo");
+		ParseObject newTodoItemParse = new ParseObject(TABLE_NAME);
 		
-		newTodoItem.put("title", title);
-		newTodoItemParse.put("title", title);
+		newTodoItem.put(TITLE_COLUMN, title);
+		newTodoItemParse.put(TITLE_COLUMN, title);
 		
 		if (dueDate == null) {
-			newTodoItem.putNull("due");
-			newTodoItemParse.put("due", JSONObject.NULL);
+			newTodoItem.putNull(DUE_COLUMN);
+			newTodoItemParse.put(DUE_COLUMN, JSONObject.NULL);
 		}
 		else
 		{
-			newTodoItem.put("due", dueDate.getTime());
-			newTodoItemParse.put("due", dueDate.getTime());
+			newTodoItem.put(DUE_COLUMN, dueDate.getTime());
+			newTodoItemParse.put(DUE_COLUMN, dueDate.getTime());
 		}
 		
 		newTodoItemParse.saveInBackground();
-		addedItemId = todo_db.insert("todo", null, newTodoItem);
+		addedItemId = todo_db.insert(TABLE_NAME, null, newTodoItem);
 		
 		return addedItemId > -1;
 	}
@@ -94,8 +105,8 @@ public class TodoDAL {
 		ContentValues todoItemToUpdate = new ContentValues();
 		
 		// Create a PARSE query to find the Item to update.
-		ParseQuery todoItemToUpdateParseQuery = new ParseQuery("todo");
-		todoItemToUpdateParseQuery.whereEqualTo("title", title);
+		ParseQuery todoItemToUpdateParseQuery = new ParseQuery(TABLE_NAME);
+		todoItemToUpdateParseQuery.whereEqualTo(TITLE_COLUMN, title);
 		
 		// Execute the query and update found PARSE Item accordingly.
 		todoItemToUpdateParseQuery.findInBackground(new FindCallback() {
@@ -106,9 +117,9 @@ public class TodoDAL {
 					ParseObject todoItemToUpdateParse = foundItems.get(0);
 					
 					if (dueDateToUpdate == null)
-						todoItemToUpdateParse.put("due", JSONObject.NULL);
+						todoItemToUpdateParse.put(DUE_COLUMN, JSONObject.NULL);
 					else
-						todoItemToUpdateParse.put("due", dueDateToUpdate.getTime());
+						todoItemToUpdateParse.put(DUE_COLUMN, dueDateToUpdate.getTime());
 					
 					todoItemToUpdateParse.saveInBackground();
 				}
@@ -117,11 +128,11 @@ public class TodoDAL {
 		
 		// Update SQLite.
 		if (dueDateToUpdate == null)
-			todoItemToUpdate.putNull("due");
+			todoItemToUpdate.putNull(DUE_COLUMN);
 		else
-			todoItemToUpdate.put("due", dueDateToUpdate.getTime());
+			todoItemToUpdate.put(DUE_COLUMN, dueDateToUpdate.getTime());
 		
-		numChangedRows = todo_db.update("todo", todoItemToUpdate, "title=?", new String[] {title});
+		numChangedRows = todo_db.update(TABLE_NAME, todoItemToUpdate, "title=?", new String[] {title});
 		return numChangedRows > 0;
 	}
 	
@@ -134,8 +145,8 @@ public class TodoDAL {
 		if (title == null)
 			return false;
 		// Create a PARSE query to find the Item to delete.
-		ParseQuery todoItemToDeleteParseQuery = new ParseQuery("todo");
-		todoItemToDeleteParseQuery.whereEqualTo("title", title);
+		ParseQuery todoItemToDeleteParseQuery = new ParseQuery(TABLE_NAME);
+		todoItemToDeleteParseQuery.whereEqualTo(TITLE_COLUMN, title);
 		
 		// Execute the query and delete found PARSE Item accordingly.
 		todoItemToDeleteParseQuery.findInBackground(new FindCallback() {
@@ -150,7 +161,7 @@ public class TodoDAL {
 		});
 		
 		// Delete Item from SQLite.
-		numDeletedRows = todo_db.delete("todo", "title=?", new String[] {title});
+		numDeletedRows = todo_db.delete(TABLE_NAME, "title=?", new String[] {title});
 		
 		return numDeletedRows > 0;
 	}
@@ -159,8 +170,8 @@ public class TodoDAL {
 	public List<ITodoItem> all() {
 		List<ITodoItem> res = new ArrayList<ITodoItem>();		
 		Cursor query = queryAllItems();
-		int titleInd = query.getColumnIndex("title");
-		int dueInd = query.getColumnIndex("due");
+		int titleInd = query.getColumnIndex(TITLE_COLUMN);
+		int dueInd = query.getColumnIndex(DUE_COLUMN);
 		
 		//TODO: check if to return an empty list or null
 		if (!query.moveToFirst())
@@ -178,7 +189,7 @@ public class TodoDAL {
 	}
 	
 	public Cursor queryAllItems() {
-		String[] columns = {"title", "due"};
-		return todo_db.query("todo", columns, null, null, null, null, null);
+		String[] columns = {"_id", TITLE_COLUMN, DUE_COLUMN};
+		return todo_db.query(TABLE_NAME, columns, null, null, null, null, null);
 	}
 }

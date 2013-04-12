@@ -15,6 +15,10 @@
     <string name="tel_title">tel:</string>
     <string name="date_format">dd/MM/yyyy</string>
     <string name="parseApplication">5ifLjXNAB2jNuwnTiyTFI5q02ZQ0v1HAswsLyfLd</string>
-    <string name="clientKey">DXnVpuWZktMm5sgyxaGQwzvynIb43FABGJFhAlz7</string>     
+    <string name="clientKey">DXnVpuWZktMm5sgyxaGQwzvynIb43FABGJFhAlz7</string>
+    <string name="SQL_title_column">title</string>
+    <string name="SQL_due_column">due</string>
+    <string name="SQL_todo_table">todo</string>
+    <string name="SQL_todo_db">todo_db</string>
 
 </resources>
